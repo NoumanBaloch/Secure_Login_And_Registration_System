@@ -197,10 +197,10 @@ function activate_user() {
 			 $result2 = query($sql2);
 			
 
-			 set_message("<p class='bg-success'>Your account has been activated please login</p>");
+			 set_message("<p class='bg-success text-center'>Your account has been activated please login</p>");
 			 redirect("login.php");
 		} else{
-			set_message("<p class='bg-danger'>Sorry Your account could not be activated</p>");
+			set_message("<p class='bg-danger text-center'>Sorry Your account could not be activated</p>");
 			 redirect("login.php");
 		}
 	}
@@ -317,7 +317,7 @@ function recover_password() {
 				echo validation_errors("Email could not be sent");
 			}
 
-			set_message("<p class='bg-success'>Please check your email or spam folder for a Password Reset </p>");
+			set_message("<p class='bg-success text-center'>Please check your email or spam folder for a Password Reset </p>");
 			redirect("index.php");
 
 
@@ -374,7 +374,7 @@ function validate_code() {
 			}
 		
 	} else {
-		set_message("<p class='bg-danger'>Sorry your validation cookie was expired</p>");
+		set_message("<p class='bg-danger text-center'>Sorry your validation cookie was expired</p>");
 		redirect("recover.php");
 
 
@@ -387,10 +387,18 @@ function validate_code() {
 
 function password_reset() {
 
-	if(isset($_GET['email']) && isset($_GET['code'])) {
+	if(isset($_COOKIE['temp_access_code'])) {
+
+		if(isset($_SESSION['token']) && $_POST['token'] == $_SESSION['token']) {
+		
+		if(isset($_GET['email']) && isset($_GET['code'])) {
 
 		echo "Its work";
+		}
+	} 
+}else {
+		set_message("<p class='bg-danger text-center'>Sorry your time has expired</p>");
+		redirect("recover.php");
 	}
 }
-
 ?>
