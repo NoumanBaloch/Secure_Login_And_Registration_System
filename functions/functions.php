@@ -330,8 +330,14 @@ function recover_password() {
 			redirect("index.php");
 		} 
 
+
 		//token check
+
+		if(isset($_POST['cancel-submit'])){
+			redirect("login.php");
+
 	} // post check
+		}
 } //function
 
 
@@ -363,7 +369,7 @@ function validate_code() {
 
 					if(row_count($result) == 1) {
 
-						setcookie('temp_access_code', $validation_code, time() + 300);
+						setcookie('temp_access_code', $validation_code, time() + 900);
 
 						redirect("reset.php?email=$email&code=$validation_code");
 					}	else {
@@ -389,16 +395,29 @@ function password_reset() {
 
 	if(isset($_COOKIE['temp_access_code'])) {
 
-		if(isset($_SESSION['token']) && $_POST['token'] == $_SESSION['token']) {
-		
 		if(isset($_GET['email']) && isset($_GET['code'])) {
 
-		echo "Its work";
+		if(isset($_SESSION['token']) && isset($_POST['token'])){
+
+		if($_POST['token'] === $_SESSION['token']){
+		
+			if($_POST['password'] === $_POST['confirm_password']) {
+
+				$updated_password = md5($_POST['password']);
+				$sql = "UPDATE users SET password = '".escape($updated_password)."', validation_code = 0 WHERE email = '".escape($_GET['email'])."'";
+					query($sql);
+
+					set_message("<p class='bg-danger text-center'>Your Password has been updated, please login</p>");
+					redirect("login.php");				
+				}
+			}
+	
 		}
-	} 
+	}
+	
 }else {
 		set_message("<p class='bg-danger text-center'>Sorry your time has expired</p>");
 		redirect("recover.php");
 	}
-}
+} //function
 ?>
